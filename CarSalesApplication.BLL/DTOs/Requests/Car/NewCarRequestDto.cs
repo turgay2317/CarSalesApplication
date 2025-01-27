@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using CarSalesApplication.BLL.DTOs.Shared;
 
-namespace CarSalesApplication.BLL.DTOs.Requests;
+namespace CarSalesApplication.BLL.DTOs.Requests.Car;
 
-public class InsertCarRequestDto
+public class NewCarRequestDto
 {
     [Required]
     public int BrandId { get; set; }

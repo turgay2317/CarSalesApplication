@@ -1,4 +1,4 @@
-namespace CarSalesApplication.BLL.DTOs.Responses;
+namespace CarSalesApplication.BLL.DTOs.Responses.Auth;
 
 public class AuthResponseDto
 {

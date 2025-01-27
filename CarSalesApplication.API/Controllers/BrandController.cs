@@ -19,8 +19,15 @@ public class BrandController : ControllerBase
         
     [AllowAnonymous]
     [HttpGet]
-    public async Task<List<BrandDto>> GetAllBrands()
+    public async Task<List<BrandDto>> GetBrands()
     {
         return await _brandService.GetBrandsAsync();
+    }
+
+    [AllowAnonymous]
+    [HttpGet("{id}")]
+    public async Task<ActionResult<BrandDto>> GetBrand(int id)
+    {
+        return await _brandService.GetBrandByIdAsync(id);
     }
 }

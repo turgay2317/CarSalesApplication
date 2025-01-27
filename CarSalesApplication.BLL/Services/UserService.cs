@@ -1,6 +1,6 @@
 using AutoMapper;
-using CarSalesApplication.BLL.DTOs.Requests;
-using CarSalesApplication.BLL.DTOs.Responses;
+using CarSalesApplication.BLL.DTOs.Requests.Auth;
+using CarSalesApplication.BLL.DTOs.Responses.Auth;
 using CarSalesApplication.BLL.Interfaces;
 using CarSalesApplication.Core.Helper;
 using CarSalesApplication.DAL.Entities;
@@ -27,25 +27,25 @@ public class UserService : IUserService
         return await _userRepository.GetUserByEmailAndPasswordAsync(email, password);
     }
 
-    public async Task<AuthResponseDto?> GetUserToken(AuthRequestDto authRequestDto)
+    public async Task<AuthResponseDto?> GetUserToken(SignInRequestDto signInRequestDto)
     {
-        User? authUser = await _userRepository.GetUserByEmailAndPasswordAsync(authRequestDto.Email, authRequestDto.Password);
+        User? authUser = await _userRepository.GetUserByEmailAndPasswordAsync(signInRequestDto.Email, signInRequestDto.Password);
         AuthResponseDto authResponseDto = new AuthResponseDto();
         authResponseDto.Token = authUser != null ? _jwtHelper.GenerateToken(authUser.Id,authUser.UserType.ToString()) : null;
         return authResponseDto;
     }
 
-    public async Task<AuthResponseDto> RegisterUser(RegisterRequestDto registerRequestDto)
+    public async Task<AuthResponseDto> RegisterUser(SignUpRequestDto signUpRequestDto)
     {
         try
         {
-            User newUser = _mapper.Map<User>(registerRequestDto);
+            User newUser = _mapper.Map<User>(signUpRequestDto);
             await _userRepository.AddUserAsync(newUser);
 
-            AuthResponseDto? authResponse = await GetUserToken(new AuthRequestDto()
+            AuthResponseDto? authResponse = await GetUserToken(new SignInRequestDto()
             {
-                Email = registerRequestDto.Email,
-                Password = registerRequestDto.Password
+                Email = signUpRequestDto.Email,
+                Password = signUpRequestDto.Password
             });
 
             if (authResponse == null)

@@ -15,7 +15,9 @@ public class CarRepository : ICarRepository
     
     public async Task<List<Car>> GetCarsAsync()
     {
-        return await _context.Cars.Include(c => c._Brand).ToListAsync();
+        return await _context.Cars
+            .Include(c => c.Photos)
+            .ToListAsync();
     }
 
     public async Task<bool> AddCarAsync(Car car)

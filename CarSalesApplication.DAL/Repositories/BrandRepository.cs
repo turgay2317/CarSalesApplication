@@ -17,4 +17,9 @@ public class BrandRepository : IBrandRepository
     { 
         return await _context.Brands.ToListAsync();
     }
+
+    public async Task<Brand?> GetBrandByIdAsync(int brandId)
+    {
+        return await _context.Brands.Include(b => b.Models).FirstOrDefaultAsync(b => b.Id == brandId);
+    }
 }

@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace CarSalesApplication.BLL.DTOs.Requests;
+namespace CarSalesApplication.BLL.DTOs.Requests.Auth;
 
-public class RegisterRequestDto
+public class SignUpRequestDto
 {
     [Required(ErrorMessage = "Name is required")]
     public string Name { get; set; }

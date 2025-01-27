@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace CarSalesApplication.BLL.DTOs.Requests;
+namespace CarSalesApplication.BLL.DTOs.Requests.Auth;
 
-public class AuthRequestDto
+public class SignInRequestDto
 {
     [Required(ErrorMessage = "Email is required")]
     [EmailAddress(ErrorMessage = "Invalid email format.")]

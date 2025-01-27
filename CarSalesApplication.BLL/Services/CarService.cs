@@ -1,5 +1,5 @@
 using AutoMapper;
-using CarSalesApplication.BLL.DTOs.Requests;
+using CarSalesApplication.BLL.DTOs.Requests.Car;
 using CarSalesApplication.BLL.DTOs.Responses;
 using CarSalesApplication.BLL.Interfaces;
 using CarSalesApplication.Core.Enums;
@@ -27,7 +27,7 @@ public class CarService : ICarService
         return _mapper.Map<List<CarDto>>(cars);
     }
 
-    public async Task<bool> AddCarAsync(InsertCarRequestDto request, string userId)
+    public async Task<bool> AddCarAsync(NewCarRequestDto request, string userId)
     {
         Car newCar = new Car()
         {

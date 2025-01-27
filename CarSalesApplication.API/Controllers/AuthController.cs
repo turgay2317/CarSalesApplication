@@ -1,4 +1,5 @@
 using CarSalesApplication.BLL.DTOs.Requests;
+using CarSalesApplication.BLL.DTOs.Requests.Auth;
 using CarSalesApplication.BLL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,13 +17,13 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("Login")]
-    public async Task<IActionResult> Login([FromBody] AuthRequestDto request)
+    public async Task<IActionResult> Login([FromBody] SignInRequestDto request)
     {
         return Ok(await _userService.GetUserToken(request));
     }
 
     [HttpPost("Register")]
-    public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
+    public async Task<IActionResult> Register([FromBody] SignUpRequestDto request)
     {
         return Ok(await _userService.RegisterUser(request));
     }

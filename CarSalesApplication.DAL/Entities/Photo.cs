@@ -10,5 +10,6 @@ public class Photo
     public byte[] Data { get; set; }
     // FK
     public int CarId { get; set; }
+    public Car Car { get; set; }
     public DateTime CreatedAt { get; set; }
 }

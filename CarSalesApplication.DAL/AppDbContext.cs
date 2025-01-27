@@ -9,6 +9,7 @@ public class AppDbContext : DbContext
     public DbSet<Car> Cars { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Photo> Photos { get; set; }
+    public DbSet<Model> Models { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {

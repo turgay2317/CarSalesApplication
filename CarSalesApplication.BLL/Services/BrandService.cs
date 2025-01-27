@@ -1,6 +1,7 @@
 using AutoMapper;
 using CarSalesApplication.BLL.DTOs.Responses;
 using CarSalesApplication.BLL.Interfaces;
+using CarSalesApplication.DAL.Entities;
 using CarSalesApplication.DAL.Interfaces;
 
 namespace CarSalesApplication.BLL.Services;
@@ -20,5 +21,10 @@ public class BrandService : IBrandService
     {
         var brands = await _brandRepository.GetBrandsAsync();
         return _mapper.Map<List<BrandDto>>(brands);
+    }
+
+    public async Task<BrandDto> GetBrandByIdAsync(int brandId)
+    {
+        return _mapper.Map<BrandDto>(await _brandRepository.GetBrandByIdAsync(brandId));
     }
 }
