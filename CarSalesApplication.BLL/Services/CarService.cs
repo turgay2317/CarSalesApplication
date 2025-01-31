@@ -1,6 +1,7 @@
 using AutoMapper;
 using CarSalesApplication.BLL.DTOs.Requests.Car;
 using CarSalesApplication.BLL.DTOs.Responses;
+using CarSalesApplication.BLL.DTOs.Responses.Car;
 using CarSalesApplication.BLL.Interfaces;
 using CarSalesApplication.Core.Enums;
 using CarSalesApplication.DAL.Entities;

@@ -1,5 +1,6 @@
 using AutoMapper;
 using CarSalesApplication.BLL.DTOs.Responses;
+using CarSalesApplication.BLL.DTOs.Responses.Model;
 using CarSalesApplication.BLL.Interfaces;
 using CarSalesApplication.DAL.Interfaces;
 
@@ -16,8 +17,8 @@ public class ModelService : IModelService
         _mapper = mapper;
     }
     
-    public async Task<ModelDto> GetModelByIdAsync(int id)
+    public async Task<ModelDtoWithCars> GetModelByIdAsync(int id)
     {
-        return _mapper.Map<ModelDto>(await _modelRepository.GetByIdAsync(id));
+        return _mapper.Map<ModelDtoWithCars>(await _modelRepository.GetByIdAsync(id));
     }
 }

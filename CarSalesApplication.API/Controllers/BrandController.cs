@@ -1,4 +1,4 @@
-using CarSalesApplication.BLL.DTOs.Responses;
+using CarSalesApplication.BLL.DTOs.Responses.Brand;
 using CarSalesApplication.BLL.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +26,7 @@ public class BrandController : ControllerBase
 
     [AllowAnonymous]
     [HttpGet("{id}")]
-    public async Task<ActionResult<BrandDto>> GetBrand(int id)
+    public async Task<ActionResult<BrandDtoWithModels>> GetBrand(int id)
     {
         return await _brandService.GetBrandByIdAsync(id);
     }

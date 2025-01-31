@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using CarSalesApplication.BLL.DTOs.Requests.Car;
 using CarSalesApplication.BLL.DTOs.Responses;
+using CarSalesApplication.BLL.DTOs.Responses.Car;
 using CarSalesApplication.BLL.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

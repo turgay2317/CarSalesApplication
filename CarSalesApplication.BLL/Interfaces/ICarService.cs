@@ -1,5 +1,6 @@
 using CarSalesApplication.BLL.DTOs.Requests.Car;
 using CarSalesApplication.BLL.DTOs.Responses;
+using CarSalesApplication.BLL.DTOs.Responses.Car;
 
 namespace CarSalesApplication.BLL.Interfaces;
 

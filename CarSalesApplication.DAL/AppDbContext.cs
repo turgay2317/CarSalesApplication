@@ -18,7 +18,10 @@ public class AppDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        
+        // Here is for Migrations.
+        optionsBuilder.UseMySql(
+            "Server=localhost;Port=3306;Database=CarSalesProject;Uid=root;Pwd=200034755;",
+            new MySqlServerVersion("8.0"), options => options.MigrationsAssembly("CarSalesApplication.API"));
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

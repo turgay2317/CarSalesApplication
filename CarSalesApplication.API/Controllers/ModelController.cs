@@ -1,4 +1,5 @@
 using CarSalesApplication.BLL.DTOs.Responses;
+using CarSalesApplication.BLL.DTOs.Responses.Model;
 using CarSalesApplication.BLL.Interfaces;
 using CarSalesApplication.BLL.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ public class ModelController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ModelDto>> Get([FromRoute] int id)
+    public async Task<ActionResult<ModelDtoWithCars>> Get([FromRoute] int id)
     {
         return await _modelService.GetModelByIdAsync(id);
     }

@@ -1,8 +1,9 @@
 using CarSalesApplication.BLL.DTOs.Responses;
+using CarSalesApplication.BLL.DTOs.Responses.Model;
 
 namespace CarSalesApplication.BLL.Interfaces;
 
 public interface IModelService
 {
-    public Task<ModelDto> GetModelByIdAsync(int id);
+    public Task<ModelDtoWithCars> GetModelByIdAsync(int id);
 }
