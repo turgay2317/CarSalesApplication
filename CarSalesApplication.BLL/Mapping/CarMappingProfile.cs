@@ -10,6 +10,8 @@ namespace CarSalesApplication.BLL.Mapping
         public CarMappingProfile()
         {
             CreateMap<Car, CarDto>();
+            CreateMap<Car, CarDtoWithProfile>()
+                .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User));
         }
     }
 }

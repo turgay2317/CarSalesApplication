@@ -29,6 +29,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 });
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); // Bütün projeleri tarar
+builder.Services.AddSingleton<ElasticSearchService>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<IModelRepository, ModelRepository>();
@@ -43,7 +44,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 var app = builder.Build();
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

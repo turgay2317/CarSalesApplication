@@ -1,6 +1,5 @@
 using AutoMapper;
 using CarSalesApplication.BLL.DTOs.Requests.Car;
-using CarSalesApplication.BLL.DTOs.Responses;
 using CarSalesApplication.BLL.DTOs.Responses.Car;
 using CarSalesApplication.BLL.Interfaces;
 using CarSalesApplication.Core.Enums;
@@ -22,12 +21,18 @@ public class CarService : ICarService
         _mapper = mapper;
     }
     
-    public async Task<List<CarDto>> GetCarsAsync()
+    public async Task<List<CarDto>> GetAllCarsAsync(PostType? type)
     {
-        var cars = await _carRepository.GetCarsAsync();
+        var cars = await _carRepository.GetAllCarsAsync(type);
         return _mapper.Map<List<CarDto>>(cars);
     }
-
+    
+    public async Task<CarDtoWithProfile> GetCarDetailsAsync(int carId)
+    {
+        var car = await _carRepository.GetCarByIdAsync(carId);
+        return _mapper.Map<CarDtoWithProfile>(car);
+    }
+    
     public async Task<bool> AddCarAsync(NewCarRequestDto request, string userId)
     {
         Car newCar = new Car()

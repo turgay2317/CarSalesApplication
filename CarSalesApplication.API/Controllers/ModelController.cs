@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CarSalesApplication.Presentation.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/model")]
 [ApiController]
 public class ModelController : ControllerBase
 {

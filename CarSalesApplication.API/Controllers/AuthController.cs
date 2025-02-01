@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CarSalesApplication.Presentation.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/auth")]
 [ApiController]
 public class AuthController : ControllerBase
 {
@@ -16,13 +16,13 @@ public class AuthController : ControllerBase
         _userService = userService;
     }
 
-    [HttpPost("Login")]
+    [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] SignInRequestDto request)
     {
         return Ok(await _userService.GetUserToken(request));
     }
 
-    [HttpPost("Register")]
+    [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] SignUpRequestDto request)
     {
         return Ok(await _userService.RegisterUser(request));
