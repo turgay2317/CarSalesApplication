@@ -17,18 +17,20 @@ public class CarController : ControllerBase
 {
     private readonly ICarService _carService;
     private readonly ElasticSearchService _elasticSearchService;
-
-    public CarController(ICarService carService, ElasticSearchService elasticsearchService)
+    private readonly ILogger<CarController> _logger;
+    public CarController(ICarService carService, ElasticSearchService elasticsearchService, ILogger<CarController> logger)
     {
         _carService = carService;
         _elasticSearchService = elasticsearchService;
+        _logger = logger;
     }
     
     //[Authorize(Roles = "Admin")]
     [AllowAnonymous]
     [HttpGet("all")]
     public async Task<List<CarDto>> GetAllCars([FromQuery] PostType? type)
-    {
+    { 
+        _logger.LogInformation("{PostType} tipi arabalar için istek geldi", type);
         return await _carService.GetAllCarsAsync(type);
     }
 
@@ -36,6 +38,7 @@ public class CarController : ControllerBase
     [HttpGet("{id}")]
     public async Task<CarDtoWithProfile> GetCarDetails(int id)
     {
+        _logger.LogInformation("{CarId} IDli araba detayı için istek geldi.", id);
         return await _carService.GetCarDetailsAsync(id);
     }
 
@@ -43,6 +46,7 @@ public class CarController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddCar([FromBody] NewCarRequestDto request)
     {
+        _logger.LogInformation("Yeni bir araba eklemek için istek geldi. {Request}", request);
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userId)) return Unauthorized("You have to provide a user ID.");
         return Ok(await _carService.AddCarAsync(request, userId));

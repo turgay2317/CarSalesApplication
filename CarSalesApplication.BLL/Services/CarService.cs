@@ -5,6 +5,7 @@ using CarSalesApplication.BLL.Interfaces;
 using CarSalesApplication.Core.Enums;
 using CarSalesApplication.DAL.Entities;
 using CarSalesApplication.DAL.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace CarSalesApplication.BLL.Services;
 
@@ -13,18 +14,35 @@ public class CarService : ICarService
     private readonly ICarRepository _carRepository;
     private readonly IPhotoRepository _photoRepository;
     private readonly IMapper _mapper;
+    private readonly ILogger<CarService> _logger;
 
-    public CarService(ICarRepository carRepository, IPhotoRepository photoRepository, IMapper mapper)
+    public CarService(ICarRepository carRepository, IPhotoRepository photoRepository, IMapper mapper, ILogger<CarService> logger)
     {
         _carRepository = carRepository;
         _photoRepository = photoRepository;
         _mapper = mapper;
+        _logger = logger;
     }
     
     public async Task<List<CarDto>> GetAllCarsAsync(PostType? type)
     {
-        var cars = await _carRepository.GetAllCarsAsync(type);
-        return _mapper.Map<List<CarDto>>(cars);
+        var carDtos = new List<CarDto>();
+        try
+        {
+            var cars = await _carRepository.GetAllCarsAsync(type);
+            carDtos = _mapper.Map<List<CarDto>>(cars);
+            _logger.LogInformation("{Type} tipinde arabalar getirildi.", type);
+        }
+        catch (AutoMapperMappingException e)
+        {
+            _logger.LogError("Mapleme işleminde hata oluştu! {Message}", e.ToString());
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Hata Oluştu! {Message}", e.ToString());
+        }
+
+        return carDtos;
     }
     
     public async Task<CarDtoWithProfile> GetCarDetailsAsync(int carId)

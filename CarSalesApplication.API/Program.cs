@@ -8,11 +8,24 @@ using CarSalesApplication.DAL.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using Serilog.Events;
+using Serilog.Formatting.Compact;
+using Serilog.Formatting.Elasticsearch;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("MySQLConnection");
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning) // Microsoft logları Warning ve üstü
+    .MinimumLevel.Override("System", LogEventLevel.Warning) // System logları Warning ve üstü
+    .WriteTo.Console(new CompactJsonFormatter(), restrictedToMinimumLevel:LogEventLevel.Debug) // Konsolda Minimum Debug-level
+    .WriteTo.File(new ElasticsearchJsonFormatter(), "logs/log-.json", rollingInterval:RollingInterval.Hour, restrictedToMinimumLevel:LogEventLevel.Information) // Dosyada Minimum Information-level 
+    .CreateLogger();
+
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Host.UseSerilog();
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(x =>
 {
     x.TokenValidationParameters = new TokenValidationParameters
