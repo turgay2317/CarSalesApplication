@@ -12,13 +12,13 @@ namespace CarSalesApplication.BLL.Services;
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
-    private readonly JwtHelper _jwtHelper;
+    private readonly KeycloakHelper _keycloakHelper;
     private readonly IMapper _mapper;
 
-    public UserService(IUserRepository userRepository, JwtHelper jwtHelper, IMapper mapper)
+    public UserService(IUserRepository userRepository, KeycloakHelper keycloakHelper, IMapper mapper)
     {
         _userRepository = userRepository;
-        _jwtHelper = jwtHelper;
+        _keycloakHelper = keycloakHelper;
         _mapper = mapper;
     }
 
@@ -31,7 +31,7 @@ public class UserService : IUserService
     {
         User? authUser = await _userRepository.GetUserByEmailAndPasswordAsync(signInRequestDto.Email, signInRequestDto.Password);
         AuthResponseDto authResponseDto = new AuthResponseDto();
-        authResponseDto.Token = authUser != null ? _jwtHelper.GenerateToken(authUser.Id,authUser.UserType.ToString()) : null;
+        authResponseDto.Token = authUser != null ? await _keycloakHelper.GetAccessTokenAsync(authUser.Email,authUser.Password) : null;
         return authResponseDto;
     }
 
@@ -40,20 +40,28 @@ public class UserService : IUserService
         try
         {
             User newUser = _mapper.Map<User>(signUpRequestDto);
-            await _userRepository.AddUserAsync(newUser);
-
-            AuthResponseDto? authResponse = await GetUserToken(new SignInRequestDto()
-            {
-                Email = signUpRequestDto.Email,
-                Password = signUpRequestDto.Password
-            });
-
-            if (authResponse == null)
+            
+            // Keycloak kayıt olmayı dene
+            var authResponse = await _keycloakHelper.CreateUserAsync(newUser.Email, newUser.Name,newUser.Surname, newUser.Password);
+            
+            if (authResponse == false)
             {
                 throw new Exception("Failed to generate token.");
             }
+            
+            // Keycloak giriş yapmayı dene
+            var accessToken = await _keycloakHelper.GetAccessTokenAsync(newUser.Email,newUser.Password);
 
-            return authResponse;
+            if (accessToken != null)
+            {
+                await _userRepository.AddUserAsync(newUser);
+                return new AuthResponseDto()
+                {
+                    Token = accessToken,
+                };
+            }
+
+            return null;
         }
         catch (DbUpdateException e)
         {

@@ -1,6 +1,7 @@
 using System.Text;
 using CarSalesApplication.BLL.Interfaces;
 using CarSalesApplication.BLL.Services;
+using CarSalesApplication.Core.Enums;
 using CarSalesApplication.Core.Helper;
 using CarSalesApplication.DAL;
 using CarSalesApplication.DAL.Interfaces;
@@ -26,19 +27,45 @@ Log.Logger = new LoggerConfiguration()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Host.UseSerilog();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(x =>
-{
-    x.TokenValidationParameters = new TokenValidationParameters
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
-        ValidAudience = builder.Configuration["JwtSettings:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"])),
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateIssuerSigningKey = true,
-        ValidateLifetime = true,
-        
-    };
+        options.Authority = "http://localhost:9500/realms/CarSales"; // Keycloak Realm URL
+        options.Audience = "CarSales"; // Keycloak Client ID
+        options.RequireHttpsMetadata = false;
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = "http://localhost:9500/realms/CarSales",
+            ValidateAudience = true,
+            ValidAudience = "account",
+            ValidateLifetime = true,
+            IssuerSigningKeyResolver = (token, securityToken, kid, parameters) =>
+            {
+                var client = new HttpClient();
+                var response = client.GetAsync("http://localhost:9500/realms/CarSales/protocol/openid-connect/certs").Result;
+                var keys = new JsonWebKeySet(response.Content.ReadAsStringAsync().Result);
+                return keys.Keys;
+            }
+        };
+    });
+
+
+builder.Services.AddAuthorization(options =>
+{
+    // Admin Role
+    options.AddPolicy("Admin", policy =>
+        policy.RequireAssertion(context =>
+            context.User.HasClaim(c =>
+                c.Type == "realm_access" &&
+                c.Value.Contains(UserType.Admin.ToString()))));
+    // User Role
+    options.AddPolicy("User", policy =>
+        policy.RequireAssertion(context =>
+            context.User.HasClaim(c =>
+                c.Type == "realm_access" &&
+                c.Value.Contains(UserType.User.ToString()))));
 });
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); // Bütün projeleri tarar
@@ -50,7 +77,7 @@ builder.Services.AddScoped<IModelService, ModelService>();
 builder.Services.AddScoped<ICarRepository, CarRepository>();
 builder.Services.AddScoped<IPhotoRepository, PhotoRepository>();
 builder.Services.AddScoped<ICarService, CarService>();
-builder.Services.AddScoped<JwtHelper>();
+builder.Services.AddHttpClient<KeycloakHelper>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddEndpointsApiExplorer();

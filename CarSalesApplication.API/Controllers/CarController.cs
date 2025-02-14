@@ -25,8 +25,8 @@ public class CarController : ControllerBase
         _logger = logger;
     }
     
-    //[Authorize(Roles = "Admin")]
-    [AllowAnonymous]
+    [Authorize(Policy = "User")]
+    //[AllowAnonymous]
     [HttpGet("all")]
     public async Task<List<CarDto>> GetAllCars([FromQuery] PostType? type)
     { 
