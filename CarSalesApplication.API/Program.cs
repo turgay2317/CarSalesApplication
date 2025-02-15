@@ -6,6 +6,7 @@ using CarSalesApplication.Core.Helper;
 using CarSalesApplication.DAL;
 using CarSalesApplication.DAL.Interfaces;
 using CarSalesApplication.DAL.Repositories;
+using CarSalesApplication.Presentation.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -93,9 +94,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
+app.UseMiddleware<LogMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseEndpoints(endpoints => endpoints.MapControllers());
-app.UseHttpsRedirection();
 
 app.Run();
