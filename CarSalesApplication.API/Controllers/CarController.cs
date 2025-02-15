@@ -18,20 +18,36 @@ public class CarController : ControllerBase
     private readonly ICarService _carService;
     private readonly ElasticSearchService _elasticSearchService;
     private readonly ILogger<CarController> _logger;
-    public CarController(ICarService carService, ElasticSearchService elasticsearchService, ILogger<CarController> logger)
-    {
+    private readonly IRedisCacheService _redisCacheService;
+    public CarController(
+        ICarService carService, 
+        ElasticSearchService elasticsearchService, 
+        ILogger<CarController> logger,
+        IRedisCacheService redisCacheService
+        ) {
         _carService = carService;
         _elasticSearchService = elasticsearchService;
         _logger = logger;
+        _redisCacheService = redisCacheService;
     }
     
-    [Authorize(Policy = "User")]
-    //[AllowAnonymous]
+    //[Authorize(Policy = "User")]
+    [AllowAnonymous]
     [HttpGet("all")]
     public async Task<List<CarDto>> GetAllCars([FromQuery] PostType? type)
     { 
         _logger.LogInformation("{PostType} tipi arabalar için istek geldi", type);
-        return await _carService.GetAllCarsAsync(type);
+        return await _redisCacheService.GetCarsAsync(type);
+    }
+    
+    [AllowAnonymous]
+    [HttpGet("all/set")]
+    public async Task<IActionResult> SetAllCars([FromQuery] PostType? type)
+    { 
+        _logger.LogInformation("{PostType} tipi arabalar redis cache kaydı için istek geldi", type);
+        var cars = await _carService.GetAllCarsAsync(type);
+        await _redisCacheService.SetCarsAsync(type, cars);
+        return Ok(cars);
     }
 
     [AllowAnonymous]
