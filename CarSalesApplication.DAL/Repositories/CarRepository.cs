@@ -14,10 +14,12 @@ public class CarRepository : ICarRepository
         this._context = context;
     }
 
-    public async Task<List<Car>> GetAllCarsAsync(PostType? type)
+    public async Task<List<Car>> GetAllCarsAsync(PostStatus? type)
     {
         return await _context.Cars
             .Where(c =>  type == null || c.Status.Equals(type)) // Null = Any type indicated
+            .Include(c => c._Brand)
+            .Include(c => c._Model)
             .Include(c => c.Photos)
             .ToListAsync();
     }
@@ -26,9 +28,13 @@ public class CarRepository : ICarRepository
     {
         return await _context.Cars
             .Where(c => c.Id == carId)
+            .Include(c => c._Brand)
+            .Include(c => c._Model)
             .Include(c => c.User)
             .Include(c => c.Photos)
-            .FirstAsync();
+            .Include(c => c.CarParts)
+            .ThenInclude(cp => cp.Part)
+            .FirstOrDefaultAsync();
     }
     
     public async Task<bool> AddCarAsync(Car car)

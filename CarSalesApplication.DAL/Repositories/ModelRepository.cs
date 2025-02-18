@@ -16,9 +16,19 @@ public class ModelRepository : IModelRepository
     // Modele göre arabaları ve fotoğraflarını döndürür.
     public async Task<Model?> GetByIdAsync(int id)
     {
-        return await _context.Models
+        var modelWithCars = await _context.Models
             .Include(m => m.Cars)
             .ThenInclude(c => c.Photos)
             .FirstOrDefaultAsync(m => m.Id == id);
+
+        if (modelWithCars != null)
+        {
+            foreach (var car in modelWithCars.Cars)
+            {
+                car._Model = null; // Hide model
+            }
+        }
+        
+        return modelWithCars;
     }
 }

@@ -14,9 +14,15 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
 using Serilog.Formatting.Elasticsearch;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("MySQLConnection");
+
+IConfiguration configuration = builder.Configuration;
+var redisConnection = ConnectionMultiplexer.Connect(configuration.GetConnectionString("Redis"));
+builder.Services.AddSingleton<IConnectionMultiplexer>(redisConnection);
+
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning) // Microsoft logları Warning ve üstü
     .MinimumLevel.Override("System", LogEventLevel.Warning) // System logları Warning ve üstü
@@ -60,17 +66,18 @@ builder.Services.AddAuthorization(options =>
         policy.RequireAssertion(context =>
             context.User.HasClaim(c =>
                 c.Type == "realm_access" &&
-                c.Value.Contains(UserType.Admin.ToString()))));
+                c.Value.Contains(UserStatus.Admin.ToString()))));
     // User Role
     options.AddPolicy("User", policy =>
         policy.RequireAssertion(context =>
             context.User.HasClaim(c =>
                 c.Type == "realm_access" &&
-                c.Value.Contains(UserType.User.ToString()))));
+                c.Value.Contains(UserStatus.User.ToString()))));
 });
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); // Bütün projeleri tarar
 builder.Services.AddSingleton<ElasticSearchService>();
+builder.Services.AddSingleton<IRedisCacheService, RedisCacheService>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<IModelRepository, ModelRepository>();

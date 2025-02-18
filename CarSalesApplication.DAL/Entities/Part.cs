@@ -3,23 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CarSalesApplication.DAL.Entities;
 
-public class Brand
+public class Part
 {
-    /// <summary>
-    /// Marka IDsi
-    /// </summary>
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id {get; set;}
-    
+    public int Id { get; set; }
     /// <summary>
-    /// Marka adı
+    /// Parça IDsi
     /// </summary>
     [Required]
     public string Name { get; set; }
-    
-    /// <summary>
-    /// Markaya ait modeller
-    /// </summary>
-    public ICollection<Model> Models { get; set; }
 }

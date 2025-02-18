@@ -34,7 +34,7 @@ public class CarController : ControllerBase
     //[Authorize(Policy = "User")]
     [AllowAnonymous]
     [HttpGet("all")]
-    public async Task<List<CarDto>> GetAllCars([FromQuery] PostType? type)
+    public async Task<List<CarDto>> GetAllCars([FromQuery] PostStatus? type)
     { 
         _logger.LogInformation("{PostType} tipi arabalar için istek geldi", type);
         return await _redisCacheService.GetCarsAsync(type);
@@ -42,17 +42,18 @@ public class CarController : ControllerBase
     
     [AllowAnonymous]
     [HttpGet("all/set")]
-    public async Task<IActionResult> SetAllCars([FromQuery] PostType? type)
+    public async Task<IActionResult> SetAllCars([FromQuery] PostStatus? type)
     { 
-        _logger.LogInformation("{PostType} tipi arabalar redis cache kaydı için istek geldi", type);
+        _logger.LogInformation("{PostType} tipi arabalar cache belleğe kaydedilecek.", type);
         var cars = await _carService.GetAllCarsAsync(type);
         await _redisCacheService.SetCarsAsync(type, cars);
+        _logger.LogInformation("{PostType} tipi arabalar cache belleğe kaydedildi.", type);
         return Ok(cars);
     }
 
     [AllowAnonymous]
     [HttpGet("{id}")]
-    public async Task<CarDtoWithProfile> GetCarDetails(int id)
+    public async Task<CarDtoWithDetails> GetCarDetails(int id)
     {
         _logger.LogInformation("{CarId} IDli araba detayı için istek geldi.", id);
         return await _carService.GetCarDetailsAsync(id);

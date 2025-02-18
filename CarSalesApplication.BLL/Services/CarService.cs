@@ -24,7 +24,7 @@ public class CarService : ICarService
         _logger = logger;
     }
     
-    public async Task<List<CarDto>> GetAllCarsAsync(PostType? type)
+    public async Task<List<CarDto>> GetAllCarsAsync(PostStatus? type)
     {
         var carDtos = new List<CarDto>();
         try
@@ -45,10 +45,10 @@ public class CarService : ICarService
         return carDtos;
     }
     
-    public async Task<CarDtoWithProfile> GetCarDetailsAsync(int carId)
+    public async Task<CarDtoWithDetails> GetCarDetailsAsync(int carId)
     {
         var car = await _carRepository.GetCarByIdAsync(carId);
-        return _mapper.Map<CarDtoWithProfile>(car);
+        return _mapper.Map<CarDtoWithDetails>(car);
     }
     
     public async Task<bool> AddCarAsync(NewCarRequestDto request, string userId)
@@ -60,7 +60,7 @@ public class CarService : ICarService
             Color = request.Color,
             Year = request.Year,
             Price = request.Price,
-            Status = PostType.Pending,
+            Status = PostStatus.Pending,
             CreatedAt = DateTime.Now,
             UserId = int.Parse(userId)
         };

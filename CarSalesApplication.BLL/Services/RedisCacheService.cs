@@ -43,14 +43,14 @@ public class RedisCacheService : IRedisCacheService
     }
 
     
-    public async Task<bool> SetCarsAsync(PostType? type, List<CarDto> cars)
+    public async Task<bool> SetCarsAsync(PostStatus? type, List<CarDto> cars)
     {
         string key = type != null ? type.ToString().ToLower() : "all";
         var carsJson = JsonSerializer.Serialize(cars);
         return await SetValueAsync(key, carsJson); 
     }
 
-    public async Task<List<CarDto>?> GetCarsAsync(PostType? type)
+    public async Task<List<CarDto>?> GetCarsAsync(PostStatus? type)
     {
         string key = type != null ? type.ToString().ToLower() : "all";
         var carsJson = await GetValueAsync(key);

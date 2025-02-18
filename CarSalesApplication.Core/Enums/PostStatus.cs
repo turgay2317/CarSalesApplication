@@ -1,6 +1,6 @@
 namespace CarSalesApplication.Core.Enums;
 
-public enum PostType
+public enum PostStatus
 {
     Deleted = -1,
     Pending =  0,

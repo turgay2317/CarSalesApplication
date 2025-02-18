@@ -1,5 +1,5 @@
 using CarSalesApplication.BLL.DTOs.Responses.Car;
-using PostType = CarSalesApplication.Core.Enums.PostType;
+using CarSalesApplication.Core.Enums;
 
 namespace CarSalesApplication.BLL.Interfaces;
 
@@ -9,6 +9,6 @@ public interface IRedisCacheService
     Task<bool> SetValueAsync(string key, string value);
     Task Clear(string key);  
     void ClearAll(); 
-    Task<bool> SetCarsAsync(PostType? type, List<CarDto> cars);
-    Task<List<CarDto>?> GetCarsAsync(PostType? type);
+    Task<bool> SetCarsAsync(PostStatus? type, List<CarDto> cars);
+    Task<List<CarDto>?> GetCarsAsync(PostStatus? type);
 }

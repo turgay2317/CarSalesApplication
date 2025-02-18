@@ -7,7 +7,7 @@ namespace CarSalesApplication.BLL.Interfaces;
 
 public interface ICarService
 {
-    public Task<List<CarDto>> GetAllCarsAsync(PostType? type);
+    public Task<List<CarDto>> GetAllCarsAsync(PostStatus? type);
     public Task<bool> AddCarAsync(NewCarRequestDto request, string userId);
-    public Task<CarDtoWithProfile> GetCarDetailsAsync(int carId);
+    public Task<CarDtoWithDetails> GetCarDetailsAsync(int carId);
 }

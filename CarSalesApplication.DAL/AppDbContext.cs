@@ -1,3 +1,4 @@
+using CarSalesApplication.Core.Enums;
 using CarSalesApplication.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +11,8 @@ public class AppDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Photo> Photos { get; set; }
     public DbSet<Model> Models { get; set; }
+    public DbSet<Part> Parts { get; set; }
+    public DbSet<CarPart> CarParts { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -28,5 +31,8 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
+        modelBuilder.Entity<CarPart>()
+            .Property(cp => cp.Status)
+            .HasDefaultValue(PartStatus.Unspecified);
     }
 }

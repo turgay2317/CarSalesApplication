@@ -5,7 +5,7 @@ namespace CarSalesApplication.DAL.Interfaces;
 
 public interface ICarRepository
 {
-    public Task<List<Car>> GetAllCarsAsync(PostType? type);
+    public Task<List<Car>> GetAllCarsAsync(PostStatus? type);
     public Task<Car?> GetCarByIdAsync(int id);
     public Task<bool> AddCarAsync(Car car);
 }
