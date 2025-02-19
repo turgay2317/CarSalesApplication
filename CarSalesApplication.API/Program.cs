@@ -7,6 +7,7 @@ using CarSalesApplication.DAL;
 using CarSalesApplication.DAL.Interfaces;
 using CarSalesApplication.DAL.Repositories;
 using CarSalesApplication.Presentation.Middleware;
+using Elastic.Clients.Elasticsearch;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -76,7 +77,14 @@ builder.Services.AddAuthorization(options =>
 });
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); // Bütün projeleri tarar
-builder.Services.AddSingleton<ElasticSearchService>();
+builder.Services.AddSingleton(sp =>
+{
+    var settings = new ElasticsearchClientSettings(new Uri("http://localhost:9200"))
+        .DefaultIndex("cars");
+
+    return new ElasticsearchClient(settings);
+});
+builder.Services.AddSingleton<IElasticSearchService, ElasticSearchService>();
 builder.Services.AddSingleton<IRedisCacheService, RedisCacheService>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<IBrandService, BrandService>();
