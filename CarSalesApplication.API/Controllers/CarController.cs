@@ -2,7 +2,6 @@ using System.Security.Claims;
 using CarSalesApplication.BLL.DTOs.Requests.Car;
 using CarSalesApplication.BLL.DTOs.Responses.Car;
 using CarSalesApplication.BLL.Interfaces;
-using CarSalesApplication.BLL.Services;
 using CarSalesApplication.Core.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,18 +15,12 @@ public class CarController : ControllerBase
 {
     private readonly ICarService _carService;
     private readonly IElasticSearchService _elasticSearchService;
-    private readonly ILogger<CarController> _logger;
-    private readonly IRedisCacheService _redisCacheService;
     public CarController(
         ICarService carService, 
-        IElasticSearchService elasticsearchService, 
-        ILogger<CarController> logger,
-        IRedisCacheService redisCacheService
+        IElasticSearchService elasticsearchService 
         ) {
         _carService = carService;
         _elasticSearchService = elasticsearchService;
-        _logger = logger;
-        _redisCacheService = redisCacheService;
     }
     
     //[Authorize(Policy = "User")]
@@ -35,39 +28,13 @@ public class CarController : ControllerBase
     [HttpGet("all")]
     public async Task<List<CarDto>> GetAllCars([FromQuery] PostStatus? type)
     { 
-        _logger.LogInformation("{PostType} tipi arabalar için istek geldi", type);
-        return await _redisCacheService.GetCarsAsync(type);
-    }
-    
-    // TODO: Cronjob bağla. Belli aralıklarla veritabanına set edilsin.
-    [AllowAnonymous]
-    [HttpGet("all/set")]
-    public async Task<IActionResult> SetAllCars([FromQuery] PostStatus? type)
-    { 
-        _logger.LogInformation("{PostType} tipi arabalar cache belleğe kaydedilecek.", type);
-        var cars = await _carService.GetAllCarsAsync(type);
-        await _redisCacheService.SetCarsAsync(type, cars);
-        _logger.LogInformation("{PostType} tipi arabalar cache belleğe kaydedildi.", type);
-        return Ok(cars);
-    }
-    
-    // TODO: Endpointi ve işlemleri düzenle.
-    [AllowAnonymous]
-    [HttpGet("all/set/es")]
-    public async Task<IActionResult> SetAllCarsElasticSearch([FromQuery] PostStatus? type)
-    { 
-        _logger.LogInformation("{PostType} tipi arabalar elastic searche kaydedilecek.", type);
-        var cars = await _carService.GetAllCarsAsync(type);
-        await _elasticSearchService.AddOrUpdateBulk(cars, "cars");
-        _logger.LogInformation("{PostType} tipi arabalar elastich searche kaydedildi.", type);
-        return Ok(cars);
+        return await _carService.GetAllCarsAsync(type);
     }
 
     [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<CarDtoWithDetails> GetCarDetails(int id)
     {
-        _logger.LogInformation("{CarId} IDli araba detayı için istek geldi.", id);
         return await _carService.GetCarDetailsAsync(id);
     }
     
@@ -84,9 +51,19 @@ public class CarController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddCar([FromBody] NewCarRequestDto request)
     {
-        _logger.LogInformation("Yeni bir araba eklemek için istek geldi. {Request}", request);
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userId)) return Unauthorized("You have to provide a user ID.");
         return Ok(await _carService.AddCarAsync(request, userId));
     }
+    
+    /*
+    [AllowAnonymous]
+    [HttpGet("all/reset")]
+    public async Task<IActionResult> SetAllCarsToElasticSearch([FromQuery] PostStatus? type)
+    {
+        var cars = await _carService.GetAllCarsAsync(type);
+        await _elasticSearchService.AddOrUpdateBulk(cars, "cars");
+        return Ok(cars);
+    }
+    */
 }

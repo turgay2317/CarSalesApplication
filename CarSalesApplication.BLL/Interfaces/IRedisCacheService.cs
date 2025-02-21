@@ -9,6 +9,10 @@ public interface IRedisCacheService
     Task<bool> SetValueAsync(string key, string value);
     Task Clear(string key);  
     void ClearAll(); 
+    // Cars
     Task<bool> SetCarsAsync(PostStatus? type, List<CarDto> cars);
     Task<List<CarDto>?> GetCarsAsync(PostStatus? type);
+    // Single Car Details
+    Task<bool> SetCarAsync(string key, CarDtoWithDetails car);
+    Task<CarDtoWithDetails?> GetCarAsync(string key);
 }

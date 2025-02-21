@@ -1,7 +1,5 @@
-using CarSalesApplication.BLL.DTOs.Responses;
 using CarSalesApplication.BLL.DTOs.Responses.Model;
 using CarSalesApplication.BLL.Interfaces;
-using CarSalesApplication.BLL.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarSalesApplication.Presentation.Controllers;

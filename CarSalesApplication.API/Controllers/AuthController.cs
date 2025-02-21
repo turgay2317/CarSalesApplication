@@ -1,4 +1,3 @@
-using CarSalesApplication.BLL.DTOs.Requests;
 using CarSalesApplication.BLL.DTOs.Requests.Auth;
 using CarSalesApplication.BLL.Interfaces;
 using Microsoft.AspNetCore.Mvc;

@@ -61,4 +61,19 @@ public class RedisCacheService : IRedisCacheService
 
         return JsonSerializer.Deserialize<List<CarDto>>(carsJson);
     }
+
+    public async Task<bool> SetCarAsync(string key, CarDtoWithDetails car)
+    {
+        return await SetValueAsync(key, JsonSerializer.Serialize(car));
+    }
+
+    public async Task<CarDtoWithDetails?> GetCarAsync(string key)
+    {
+        var carJson = await GetValueAsync(key);
+        if (string.IsNullOrEmpty(carJson))
+        {
+            return null;
+        }        
+        return JsonSerializer.Deserialize<CarDtoWithDetails>(carJson);
+    }
 }
