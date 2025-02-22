@@ -4,7 +4,7 @@ using CarSalesApplication.BLL.DTOs.Responses.User;
 using CarSalesApplication.Core.Enums;
 using CarSalesApplication.DAL.Entities;
 
-namespace CarSalesApplication.BLL.Mapping
+namespace CarSalesApplication.BLL.Mappings
 {
     public class UserMappingProfile : Profile
     {

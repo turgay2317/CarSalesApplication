@@ -2,7 +2,7 @@ using AutoMapper;
 using CarSalesApplication.BLL.DTOs.Responses.Model;
 using CarSalesApplication.DAL.Entities;
 
-namespace CarSalesApplication.BLL.Mapping;
+namespace CarSalesApplication.BLL.Mappings;
 
 public class ModelMappingProfile : Profile
 {
@@ -10,7 +10,6 @@ public class ModelMappingProfile : Profile
     {
         CreateMap<Model, ModelDto>();
         CreateMap<Model, ModelDtoWithCars>()
-            .ForMember(dest => dest.Model, opt => opt.MapFrom(src => src))
             .ForMember(dest => dest.Cars, opt => opt.MapFrom(src => src.Cars));
     }
 }

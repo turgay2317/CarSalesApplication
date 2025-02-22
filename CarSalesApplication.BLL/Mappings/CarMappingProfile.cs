@@ -2,7 +2,7 @@ using AutoMapper;
 using CarSalesApplication.DAL.Entities;
 using CarSalesApplication.BLL.DTOs.Responses.Car;
 
-namespace CarSalesApplication.BLL.Mapping
+namespace CarSalesApplication.BLL.Mappings
 {
     public class CarMappingProfile : Profile
     {
