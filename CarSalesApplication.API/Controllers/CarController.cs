@@ -25,7 +25,7 @@ public class CarController : ControllerBase
     
     //[Authorize(Policy = "User")]
     [AllowAnonymous]
-    [HttpGet("all")]
+    [HttpGet("")]
     public async Task<List<CarDto>> GetAllCars([FromQuery] PostStatus? type)
     { 
         return await _carService.GetAllCarsAsync(type);
@@ -39,7 +39,7 @@ public class CarController : ControllerBase
     }
     
     [AllowAnonymous]
-    [HttpGet("/all/search")]
+    [HttpGet("search")]
     public async Task<List<CarDto>> SearchCars([FromQuery] string keyword)
     {
         return await _elasticSearchService.GetAll(keyword);
@@ -51,9 +51,9 @@ public class CarController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddCar([FromBody] NewCarRequestDto request)
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userId)) return Unauthorized("You have to provide a user ID.");
-        return Ok(await _carService.AddCarAsync(request, userId));
+        var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+        if (string.IsNullOrEmpty(userEmail)) return Unauthorized("You have to provide correct authorization.");
+        return Ok(await _carService.AddCarAsync(request, userEmail));
     }
     
     /*

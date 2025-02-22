@@ -1,79 +1,36 @@
 using System.Text.Json;
-using CarSalesApplication.BLL.DTOs.Responses.Car;
-using CarSalesApplication.BLL.Interfaces;
-using CarSalesApplication.Core.Enums;
 using StackExchange.Redis;
+using CarSalesApplication.BLL.Interfaces;
 
-namespace CarSalesApplication.BLL.Services;
-
-public class RedisCacheService : IRedisCacheService
+namespace CarSalesApplication.BLL.Services
 {
-    private readonly IConnectionMultiplexer _redisConnection;
-    private readonly IDatabase _cache;
-
-    public RedisCacheService(IConnectionMultiplexer redisConnection)
+    public class RedisCacheService : ICacheService
     {
-        _redisConnection = redisConnection; 
-        _cache = redisConnection.GetDatabase();
-    }
+        private readonly IConnectionMultiplexer _redisConnection;
+        private readonly IDatabase _cache;
 
-    public async Task<bool> SetValueAsync(string key, string value)
-    {
-        return await _cache.StringSetAsync(key, value, TimeSpan.FromMinutes(10));
-    }
-
-    public async Task<string> GetValueAsync(string key)
-    {
-        return await _cache.StringGetAsync(key);
-    }
-
-    public async Task Clear(string key)
-    {
-        await _cache.KeyDeleteAsync(key);
-    }
-
-    public void ClearAll()
-    {
-        var redisEndpoints = _redisConnection.GetEndPoints(true);
-        foreach (var redisEndpoint in redisEndpoints)
+        public RedisCacheService(IConnectionMultiplexer redisConnection)
         {
-            var redisServer = _redisConnection.GetServer(redisEndpoint);
-            redisServer.FlushAllDatabases();
-        }
-    }
-
-    
-    public async Task<bool> SetCarsAsync(PostStatus? type, List<CarDto> cars)
-    {
-        string key = type != null ? type.ToString().ToLower() : "all";
-        var carsJson = JsonSerializer.Serialize(cars);
-        return await SetValueAsync(key, carsJson); 
-    }
-
-    public async Task<List<CarDto>?> GetCarsAsync(PostStatus? type)
-    {
-        string key = type != null ? type.ToString().ToLower() : "all";
-        var carsJson = await GetValueAsync(key);
-        if (string.IsNullOrEmpty(carsJson))
-        {
-            return null;
+            _redisConnection = redisConnection;
+            _cache = redisConnection.GetDatabase();
         }
 
-        return JsonSerializer.Deserialize<List<CarDto>>(carsJson);
-    }
-
-    public async Task<bool> SetCarAsync(string key, CarDtoWithDetails car)
-    {
-        return await SetValueAsync(key, JsonSerializer.Serialize(car));
-    }
-
-    public async Task<CarDtoWithDetails?> GetCarAsync(string key)
-    {
-        var carJson = await GetValueAsync(key);
-        if (string.IsNullOrEmpty(carJson))
+        public async Task<bool> SetAsync<T>(string key, T value, TimeSpan? duration = null)
         {
-            return null;
-        }        
-        return JsonSerializer.Deserialize<CarDtoWithDetails>(carJson);
+            var serializedValue = JsonSerializer.Serialize(value);
+            var expiration = duration ?? TimeSpan.FromMinutes(10);
+            return await _cache.StringSetAsync(key, serializedValue, expiration);
+        }
+
+        public async Task<T> GetAsync<T>(string key)
+        {
+            var valueJson = await _cache.StringGetAsync(key);
+            if (string.IsNullOrEmpty(valueJson))
+            {
+                return default;
+            }
+
+            return JsonSerializer.Deserialize<T>(valueJson);
+        }
     }
 }

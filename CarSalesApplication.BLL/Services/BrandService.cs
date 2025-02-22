@@ -2,6 +2,7 @@ using AutoMapper;
 using CarSalesApplication.BLL.DTOs.Responses.Brand;
 using CarSalesApplication.BLL.Interfaces;
 using CarSalesApplication.DAL.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace CarSalesApplication.BLL.Services;
@@ -11,25 +12,25 @@ public class BrandService : IBrandService
     private readonly IBrandRepository _brandRepository;
     private readonly IMapper _mapper;
     private readonly ILogger<BrandService> _logger;
-    private readonly IMemoryCacheService _memoryCacheService;
+    private readonly ICacheService _cacheService;
     
     public BrandService(
         IBrandRepository brandRepository, 
         IMapper mapper, 
         ILogger<BrandService> logger,
-        IMemoryCacheService memoryCacheService)
+        [FromKeyedServices("Memory")] ICacheService cacheService)
     {
         _brandRepository = brandRepository;
         _mapper = mapper;
         _logger = logger;
-        _memoryCacheService = memoryCacheService;
+        _cacheService = cacheService;
     }
     
     public async Task<List<BrandDto>> GetBrandsAsync()
     {
         _logger.LogInformation("Markalar için istek geldi.");
         // Retrieving from In-Memory Cache
-        var brandsDto = await _memoryCacheService.GetAsync<List<BrandDto>>("Brands");
+        var brandsDto = await _cacheService.GetAsync<List<BrandDto>>("Brands");
         if (brandsDto != null)
             return brandsDto;
         
@@ -41,7 +42,7 @@ public class BrandService : IBrandService
             var brands = await _brandRepository.GetBrandsAsync();
             brandsDto = _mapper.Map<List<BrandDto>>(brands);
             _logger.LogInformation("Markalar getirildi");
-            await _memoryCacheService.SetAsync("Brands", brandsDto, TimeSpan.FromDays(1));
+            await _cacheService.SetAsync("Brands", brandsDto, TimeSpan.FromDays(1));
         }
         catch (AutoMapperMappingException e)
         {
@@ -59,7 +60,7 @@ public class BrandService : IBrandService
     {
         _logger.LogInformation("{BrandId} idli  marka için model listeleme isteği geldi.", brandId);
         // Retrieving from In-Memory Cache
-        var brandDtoWithModels = await _memoryCacheService.GetAsync<BrandDtoWithModels>($"Brands/{brandId}");
+        var brandDtoWithModels = await _cacheService.GetAsync<BrandDtoWithModels>($"Brands/{brandId}");
         if (brandDtoWithModels != null)
             return brandDtoWithModels;
         
@@ -71,7 +72,7 @@ public class BrandService : IBrandService
             var brandWithModels = await _brandRepository.GetBrandByIdAsync(brandId);
             brandDtoWithModels = _mapper.Map<BrandDtoWithModels>(brandWithModels);
             _logger.LogInformation("{BrandId} idli  marka için modeller listelendi.", brandId);
-            await _memoryCacheService.SetAsync($"Brands/{brandId}", brandWithModels, TimeSpan.FromDays(1));
+            await _cacheService.SetAsync($"Brands/{brandId}", brandWithModels, TimeSpan.FromDays(1));
         }
         catch (AutoMapperMappingException e)
         {

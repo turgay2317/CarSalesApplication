@@ -2,6 +2,7 @@ using AutoMapper;
 using CarSalesApplication.BLL.DTOs.Responses.Model;
 using CarSalesApplication.BLL.Interfaces;
 using CarSalesApplication.DAL.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace CarSalesApplication.BLL.Services;
@@ -11,25 +12,25 @@ public class ModelService : IModelService
     private readonly IModelRepository _modelRepository;
     private readonly IMapper _mapper;
     private readonly ILogger<ModelService> _logger;
-    private readonly IMemoryCacheService _memoryCacheService;
+    private readonly ICacheService _cacheService;
     
     public ModelService(
         IModelRepository modelRepository, 
         IMapper mapper, 
         ILogger<ModelService> logger, 
-        IMemoryCacheService memoryCacheService)
+        [FromKeyedServices("Memory")] ICacheService cacheService)
     {
         _modelRepository = modelRepository;
         _mapper = mapper;
         _logger = logger;
-        _memoryCacheService = memoryCacheService;
+        _cacheService = cacheService;
     }
     
     public async Task<ModelDtoWithCars> GetModelByIdAsync(int id)
     {
         _logger.LogInformation("{ModelId} idli modele ait arabalar için istek geldi", id);
         // Retrieving from In-Memory cache
-        var modelDtoWithCars = await _memoryCacheService.GetAsync<ModelDtoWithCars>($"Model/{id}");
+        var modelDtoWithCars = await _cacheService.GetAsync<ModelDtoWithCars>($"Model/{id}");
         if (modelDtoWithCars != null)
             return modelDtoWithCars;
         
@@ -41,7 +42,7 @@ public class ModelService : IModelService
             var modelWithCars = await _modelRepository.GetByIdAsync(id);
             modelDtoWithCars = _mapper.Map<ModelDtoWithCars>(modelWithCars);
             _logger.LogInformation("{ModelId} id için arabalar getirildi.", id);
-            await _memoryCacheService.SetAsync($"Model/{id}", modelDtoWithCars, TimeSpan.FromHours(12));
+            await _cacheService.SetAsync($"Model/{id}", modelDtoWithCars, TimeSpan.FromHours(12));
         }
         catch (AutoMapperMappingException e)
         {

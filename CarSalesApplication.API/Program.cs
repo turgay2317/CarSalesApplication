@@ -75,6 +75,7 @@ builder.Services.AddAuthorization(options =>
                 c.Type == "realm_access" &&
                 c.Value.Contains(UserStatus.User.ToString()))));
 });
+builder.Services.AddMemoryCache();
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); // Bütün projeleri tarar
 builder.Services.AddSingleton(sp =>
@@ -85,7 +86,8 @@ builder.Services.AddSingleton(sp =>
     return new ElasticsearchClient(settings);
 });
 builder.Services.AddSingleton<IElasticSearchService, ElasticSearchService>();
-builder.Services.AddSingleton<IRedisCacheService, RedisCacheService>();
+builder.Services.AddKeyedSingleton<ICacheService, RedisCacheService>("Redis");
+builder.Services.AddKeyedSingleton<ICacheService, MemoryCacheService>("Memory");
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<IModelRepository, ModelRepository>();
