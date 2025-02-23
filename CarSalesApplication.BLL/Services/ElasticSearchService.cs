@@ -5,7 +5,7 @@ using Elastic.Clients.Elasticsearch;
 
 namespace CarSalesApplication.BLL.Services
 {
-    public class ElasticSearchService : IElasticSearchService
+    public class ElasticSearchService : ISearchService
     {
         private readonly ElasticsearchClient _elasticClient;
         private string _defaultIndex = "cars";

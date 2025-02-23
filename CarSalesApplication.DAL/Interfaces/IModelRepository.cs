@@ -4,5 +4,5 @@ namespace CarSalesApplication.DAL.Interfaces;
 
 public interface IModelRepository
 {
-    public Task<Model?> GetByIdAsync(int id);
+    public Model? GetById(int id);
 }

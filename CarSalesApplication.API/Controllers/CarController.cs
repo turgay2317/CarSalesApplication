@@ -14,13 +14,13 @@ namespace CarSalesApplication.Presentation.Controllers;
 public class CarController : ControllerBase
 {
     private readonly ICarService _carService;
-    private readonly IElasticSearchService _elasticSearchService;
+    private readonly ISearchService _searchService;
     public CarController(
         ICarService carService, 
-        IElasticSearchService elasticsearchService 
+        ISearchService  searchService
         ) {
         _carService = carService;
-        _elasticSearchService = elasticsearchService;
+        _searchService = searchService;
     }
     
     //[Authorize(Policy = "User")]
@@ -42,7 +42,7 @@ public class CarController : ControllerBase
     [HttpGet("search")]
     public async Task<List<CarDto>> SearchCars([FromQuery] string keyword)
     {
-        return await _elasticSearchService.GetAll(keyword);
+        return await _searchService.GetAll(keyword);
     }
 
     // TODO: Yetkilendirmeyi ayarlar.

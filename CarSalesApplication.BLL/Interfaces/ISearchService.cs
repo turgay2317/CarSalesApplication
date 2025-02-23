@@ -3,7 +3,7 @@ using CarSalesApplication.DAL.Entities;
 
 namespace CarSalesApplication.BLL.Interfaces;
 
-public interface IElasticSearchService
+public interface ISearchService
 {
     Task<bool> AddOrUpdate(CarDto car);
     Task<bool> AddOrUpdateBulk(List<CarDto> cars, string indexName);
