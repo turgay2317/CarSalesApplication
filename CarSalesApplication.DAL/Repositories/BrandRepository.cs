@@ -10,16 +10,16 @@ public class BrandRepository : IBrandRepository
 
     public BrandRepository(AppDbContext context)
     {
-        this._context = context;
+        _context = context;
     }
     
-    public async Task<List<Brand>> GetBrandsAsync()
+    public List<Brand> GetBrands()
     { 
-        return await _context.Brands.ToListAsync();
+        return _context.Brands.ToList();
     }
 
-    public async Task<Brand?> GetBrandByIdAsync(int brandId)
+    public Brand? GetBrandById(int brandId)
     {
-        return await _context.Brands.Include(b => b.Models).FirstOrDefaultAsync(b => b.Id == brandId);
+        return _context.Brands.Include(b => b.Models).FirstOrDefault(b => b.Id == brandId);
     }
 }

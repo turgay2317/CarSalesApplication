@@ -14,12 +14,12 @@ public class ModelRepository : IModelRepository
     }
     
     // Modele göre arabaları ve fotoğraflarını döndürür.
-    public async Task<Model?> GetByIdAsync(int id)
+    public Model? GetById(int id)
     {
-        var modelWithCars = await _context.Models
+        var modelWithCars = _context.Models
             .Include(m => m.Cars)
             .ThenInclude(c => c.Photos)
-            .FirstOrDefaultAsync(m => m.Id == id);
+            .FirstOrDefault(m => m.Id == id);
 
         if (modelWithCars != null)
         {

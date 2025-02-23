@@ -39,7 +39,7 @@ public class BrandService : IBrandService
         
         try
         {
-            var brands = await _brandRepository.GetBrandsAsync();
+            var brands = _brandRepository.GetBrands();
             brandsDto = _mapper.Map<List<BrandDto>>(brands);
             _logger.LogInformation("Markalar getirildi");
             await _cacheService.SetAsync("Brands", brandsDto, TimeSpan.FromDays(1));
@@ -69,7 +69,7 @@ public class BrandService : IBrandService
         
         try
         {
-            var brandWithModels = await _brandRepository.GetBrandByIdAsync(brandId);
+            var brandWithModels = _brandRepository.GetBrandById(brandId);
             brandDtoWithModels = _mapper.Map<BrandDtoWithModels>(brandWithModels);
             _logger.LogInformation("{BrandId} idli  marka için modeller listelendi.", brandId);
             await _cacheService.SetAsync($"Brands/{brandId}", brandWithModels, TimeSpan.FromDays(1));

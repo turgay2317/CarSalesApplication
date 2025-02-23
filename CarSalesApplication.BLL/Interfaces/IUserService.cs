@@ -6,7 +6,6 @@ namespace CarSalesApplication.BLL.Interfaces;
 
 public interface IUserService
 {
-    public Task<User?> GetUserByEmailAndPassword(string email, string password);
     public Task<AuthResponseDto?> GetUserToken(SignInRequestDto signInRequestDto);
     public Task<AuthResponseDto> RegisterUser(SignUpRequestDto signUpRequestDto);
 }

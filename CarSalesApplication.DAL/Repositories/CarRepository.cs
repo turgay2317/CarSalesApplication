@@ -14,19 +14,19 @@ public class CarRepository : ICarRepository
         this._context = context;
     }
 
-    public async Task<List<Car>> GetAllCarsAsync(PostStatus? type)
+    public List<Car> GetAllCars(PostStatus? type)
     {
-        return await _context.Cars
+        return _context.Cars
             .Where(c =>  type == null || c.Status.Equals(type)) // Null = Any type indicated
             .Include(c => c._Brand)
             .Include(c => c._Model)
             .Include(c => c.Photos)
-            .ToListAsync();
+            .ToList();
     }
 
-    public async Task<Car?> GetCarByIdAsync(int carId)
+    public Car? GetCarById(int carId)
     {
-        return await _context.Cars
+        return _context.Cars
             .Where(c => c.Id == carId)
             .Include(c => c._Brand)
             .Include(c => c._Model)
@@ -34,7 +34,7 @@ public class CarRepository : ICarRepository
             .Include(c => c.Photos)
             .Include(c => c.CarParts)
             .ThenInclude(cp => cp.Part)
-            .FirstOrDefaultAsync();
+            .FirstOrDefault();
     }
     
     public async Task<bool> AddCarAsync(Car car)

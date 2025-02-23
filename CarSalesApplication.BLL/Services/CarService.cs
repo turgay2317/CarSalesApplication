@@ -46,7 +46,7 @@ public class CarService : ICarService
         
         try
         {
-            var cars = await _carRepository.GetAllCarsAsync(type);
+            var cars = _carRepository.GetAllCars(type);
             carDtos = _mapper.Map<List<CarDto>>(cars);
             _logger.LogInformation("{Type} tipinde arabalar getirildi.", type);
             await _cacheService.SetAsync<List<CarDto>>(typeString, carDtos);
@@ -77,7 +77,7 @@ public class CarService : ICarService
         
         try
         {
-            var car = await _carRepository.GetCarByIdAsync(carId);
+            var car = _carRepository.GetCarById(carId);
             carDto = _mapper.Map<CarDtoWithDetails>(car);
             await _cacheService.SetAsync<CarDtoWithDetails>($"car/{carId}", carDto);
         }

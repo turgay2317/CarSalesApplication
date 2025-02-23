@@ -39,7 +39,7 @@ public class ModelService : IModelService
         
         try
         {
-            var modelWithCars = await _modelRepository.GetByIdAsync(id);
+            var modelWithCars = _modelRepository.GetById(id);
             modelDtoWithCars = _mapper.Map<ModelDtoWithCars>(modelWithCars);
             _logger.LogInformation("{ModelId} id için arabalar getirildi.", id);
             await _cacheService.SetAsync($"Model/{id}", modelDtoWithCars, TimeSpan.FromHours(12));

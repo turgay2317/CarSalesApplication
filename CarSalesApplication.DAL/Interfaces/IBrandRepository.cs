@@ -4,6 +4,6 @@ namespace CarSalesApplication.DAL.Interfaces;
 
 public interface IBrandRepository
 {
-    Task<List<Brand>> GetBrandsAsync();
-    Task<Brand?> GetBrandByIdAsync(int brandId);
+    List<Brand> GetBrands();
+    Brand? GetBrandById(int brandId);
 }
