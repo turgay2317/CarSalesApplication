@@ -85,7 +85,7 @@ builder.Services.AddSingleton(sp =>
 
     return new ElasticsearchClient(settings);
 });
-builder.Services.AddSingleton<IElasticSearchService, ElasticSearchService>();
+builder.Services.AddSingleton<ISearchService, ElasticSearchService>();
 builder.Services.AddKeyedSingleton<ICacheService, RedisCacheService>("Redis");
 builder.Services.AddKeyedSingleton<ICacheService, MemoryCacheService>("Memory");
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
