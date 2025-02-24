@@ -24,10 +24,10 @@ public class CarRepository : ICarRepository
             .ToList();
     }
 
-    public Car? GetCarById(int carId)
+    public Car? GetCarById(int id)
     {
         return _context.Cars
-            .Where(c => c.Id == carId)
+            .Where(c => c.Id == id)
             .Include(c => c._Brand)
             .Include(c => c._Model)
             .Include(c => c.User)

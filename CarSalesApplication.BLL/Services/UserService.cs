@@ -1,3 +1,4 @@
+using System.Security.Authentication;
 using AutoMapper;
 using CarSalesApplication.BLL.DTOs.Requests.Auth;
 using CarSalesApplication.BLL.DTOs.Responses.Auth;
@@ -64,10 +65,10 @@ public class UserService : IUserService
             // Keycloak kayıt olmayı dene
             var authResponse = await _keycloakHelper.CreateUserAsync(newUser.Email, newUser.Name,newUser.Surname, newUser.Password);
             
-            if (authResponse == false)
+            if (!authResponse)
             {
                 _logger.LogError("Keycloak kaydı başarısız oldu. {Name} {Surname} {Email}", signUpRequestDto.Name, signUpRequestDto.Surname, signUpRequestDto.Email);
-                throw new Exception("Failed to generate token.");
+                throw new AuthenticationException("Keycloak ile kayıt olma başarısız");
             }
             
             // Keycloak giriş yapmayı dene
@@ -87,7 +88,7 @@ public class UserService : IUserService
         catch (DbUpdateException e)
         {
             _logger.LogError("Kullanıcı aynı e-postayla kaydolmaya çalıştı. {Name} {Surname} {Email}", signUpRequestDto.Name, signUpRequestDto.Surname, signUpRequestDto.Email);
-            throw new Exception("Failed to register same email.");
+            throw new DbUpdateException($"Failed to register same email. {e.Message}");
         }
 
         return await Task.FromException<AuthResponseDto>(new Exception("Kayıt başarısız."));

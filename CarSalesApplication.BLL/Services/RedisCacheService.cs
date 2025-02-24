@@ -6,12 +6,10 @@ namespace CarSalesApplication.BLL.Services
 {
     public class RedisCacheService : ICacheService
     {
-        private readonly IConnectionMultiplexer _redisConnection;
         private readonly IDatabase _cache;
 
         public RedisCacheService(IConnectionMultiplexer redisConnection)
         {
-            _redisConnection = redisConnection;
             _cache = redisConnection.GetDatabase();
         }
 

@@ -8,7 +8,7 @@ namespace CarSalesApplication.BLL.Services
     public class ElasticSearchService : ISearchService
     {
         private readonly ElasticsearchClient _elasticClient;
-        private string _defaultIndex = "cars";
+        private readonly string _defaultIndex = "cars";
 
         public ElasticSearchService(ElasticsearchClient elasticClient)
         {

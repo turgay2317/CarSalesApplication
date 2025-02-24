@@ -45,8 +45,6 @@ public class CarController : ControllerBase
         return await _searchService.GetAll(keyword);
     }
 
-    // TODO: Yetkilendirmeyi ayarlar.
-    // TODO: Araba eklenince elasticsearch indexini güncelle.
     [Authorize(Roles = "Admin,User")]
     [HttpPost]
     public async Task<IActionResult> AddCar([FromBody] NewCarRequestDto request)
@@ -56,14 +54,4 @@ public class CarController : ControllerBase
         return Ok(await _carService.AddCarAsync(request, userEmail));
     }
     
-    /*
-    [AllowAnonymous]
-    [HttpGet("all/reset")]
-    public async Task<IActionResult> SetAllCarsToElasticSearch([FromQuery] PostStatus? type)
-    {
-        var cars = await _carService.GetAllCarsAsync(type);
-        await _elasticSearchService.AddOrUpdateBulk(cars, "cars");
-        return Ok(cars);
-    }
-    */
 }
